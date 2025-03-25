@@ -7,6 +7,8 @@ import 'react-native-reanimated';
 
 import "../styles/global.css"
 import { CreateTripContext } from '@/context/CreateTripContext';
+import { View } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,13 +33,17 @@ export default function RootLayout() {
   
 
   return (
+    <View style={{ flex: 1, backgroundColor: '#0c0f14', color: "white" }} className='font-outfit'>
+
+    
     <CreateTripContext.Provider value={{ tripData, setTripData }}>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack screenOptions={{ headerShown: false }} >
         <Stack.Screen name='(tabs)' />
         <Stack.Screen name='create-trip' />
         <Stack.Screen name='trip-details' />
       </Stack>
       <StatusBar style="auto" />
     </CreateTripContext.Provider>
+    </View>
   );
 }

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Profile = () => {
+const Notification = () => {
   return (
     <View>
       <Text>profile</Text>
@@ -9,4 +9,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default Notification
