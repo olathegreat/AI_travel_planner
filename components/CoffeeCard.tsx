@@ -1,10 +1,48 @@
-import { View, Text } from "react-native";
-import React from "react";
+import { View, Text, ToastAndroid } from "react-native";
+import React, { useState } from "react";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useDispatch } from "react-redux";
+import { updateCartItems } from "@/utils/userCartSlice";
+
+
+
+interface CartItem {
+  type: string;
+  shortDesc: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+  cupSize?: string;
+  size?: string;
+  image: string;
+}
 
 const CoffeeCard = ({ data }: any) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState(1);
+
+
+
+  const addItemToCart = ()=>{
+
+    const cartItem:CartItem = {
+      type: data.type,
+      shortDesc: data.shortDesc,
+      price: data.price,
+      quantity: quantity,
+      totalPrice: data.price * quantity,
+      cupSize: data.cupSize.size,
+      image: data.image
+
+    }
+    dispatch(updateCartItems(cartItem));
+    ToastAndroid.show("item added to cart", ToastAndroid.BOTTOM)
+
+  }
   return (
     <View className="w-[184px] h-[300px] rounded-3xl  p-3 pr-3 bg-gradient-to-tl from-gray-950 to-gray-600 relative">
        
@@ -47,7 +85,24 @@ const CoffeeCard = ({ data }: any) => {
           <Text className="font-outfit-medium text-2xl text-white">{data.price}</Text>
         </View>
 
-        <TouchableOpacity className="bg-secondary text-white rounded-md px-4 py-2">
+        <TouchableOpacity 
+            onPress={()=>{
+              if(data.cupSize){
+                router.push({
+                  pathname: "/pages/CoffeePage",
+                  params: {data: JSON.stringify(data)}
+                })
+              }else{
+                router.push({
+                  pathname: "/pages/CoffeeBeansPage",
+                  params: {data: JSON.stringify(data)}
+                })
+
+              }
+             
+            }}
+        
+        className="bg-secondary text-white rounded-md px-4 py-2">
           <Text className="text-3xl text-white">+</Text>
           
         </TouchableOpacity>

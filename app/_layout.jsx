@@ -9,7 +9,8 @@ import "../styles/global.css"
 import { CreateTripContext } from '@/context/CreateTripContext';
 import { View } from 'react-native';
 import { Colors } from '@/constants/Colors';
-
+import {Provider} from 'react-redux'
+import { store } from '@/utils/store';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -33,6 +34,10 @@ export default function RootLayout() {
   
 
   return (
+
+    <Provider store={store}>
+
+   
     <View style={{ flex: 1, backgroundColor: '#0c0f14', color: "white" }} className='font-outfit'>
 
     
@@ -45,5 +50,6 @@ export default function RootLayout() {
       <StatusBar style="auto" />
     </CreateTripContext.Provider>
     </View>
+    </Provider>
   );
 }
