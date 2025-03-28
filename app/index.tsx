@@ -8,6 +8,7 @@ import SplashScreen from '@/components/SplashScreen'
 import { useDispatch } from 'react-redux'
 import { cartSetter } from '@/utils/userCartSlice'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { favoritesSetter } from '@/utils/favoritesSlice'
 
 const index = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +21,7 @@ const index = () => {
 
       const asyncStorageFunction = async()=>{
         const localStorageCart = await AsyncStorage.getItem("cart");
-      
+        const localStorageFavorites = await AsyncStorage.getItem("favorites");
 
      
 
@@ -34,6 +35,20 @@ const index = () => {
         } catch (error) {
           console.error("Failed to parse cart data:", error);
           dispatch(cartSetter([])); // Fallback to empty array
+        }
+      }
+
+
+
+      if (localStorageFavorites !== null) {
+        try {
+          const parsedFavorites = JSON.parse(localStorageFavorites);
+          if (Array.isArray(parsedFavorites)) { // Additional type safety
+            dispatch(favoritesSetter(parsedFavorites));
+          }
+        } catch (error) {
+          console.error("Failed to parse favorites data:", error);
+          dispatch(favoritesSetter([])); // Fallback to empty array
         }
       }
       }

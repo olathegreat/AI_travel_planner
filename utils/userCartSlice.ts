@@ -32,10 +32,15 @@ const cartSlice = createSlice({
   reducers: {
     updateCartItems: (state, action: PayloadAction<CartItem>) => {
       // Check if item already exists in cart
-      const existingItemIndex = state.cart.findIndex(
-        item => item.type === action.payload.type && 
-               item.cupSize === action.payload.cupSize
-      );
+      let existingItemIndex;
+
+      if(action.payload.cupSize){
+        existingItemIndex = state.cart.findIndex(
+          item => item.type === action.payload.type && 
+                 item.cupSize === action.payload.cupSize
+        );
+      
+      
 
       if (existingItemIndex >= 0) {
         
@@ -43,6 +48,22 @@ const cartSlice = createSlice({
       } else {
         state.cart.push(action.payload);
       }
+    }else if(action.payload.size){
+
+existingItemIndex = state.cart.findIndex(
+          item => item.type === action.payload.type && 
+                 item.size === action.payload.size
+        );
+      
+      
+
+      if (existingItemIndex >= 0) {
+        
+        state.cart[existingItemIndex] = action.payload;
+      } else {
+        state.cart.push(action.payload);
+      }
+    }
 
       const asyncStorageFunction = async ()=>{
         await AsyncStorage.setItem("cart", JSON.stringify(state.cart))

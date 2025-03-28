@@ -1,15 +1,28 @@
 import { View, Text, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
+import { CartItem } from "@/utils/userCartSlice";
+import { CoffeeData } from "@/utils/favoritesSlice";
+import { useSelector } from "react-redux";
 
-const CoffeeNavBar = ({heading}:{heading?: string}) => {
+const CoffeeNavBar = ({heading,favoriteFunction, favoriteData}:{heading?: string, favoriteFunction?:()=>void, favoriteData?:CoffeeData}) => {
+  
   const router = useRouter();
+  const storedFavorites = useSelector((state:any) => state.favorites.favorites);
   const [favorite, setFavorite] = useState(false);
   const favoriteClick = ()=>{
     setFavorite(!favorite);
+     favoriteFunction && favoriteFunction();
   }
+  
+
+  useEffect(()=>{
+       const isFavorite = storedFavorites.some((item:CoffeeData) => item.type === favoriteData?.type && item.shortDesc === favoriteData?.shortDesc);
+
+       setFavorite(isFavorite);
+  },[])
   return (
     <View className="w-full h-20  flex flex-row justify-between items-center  ">
       <TouchableOpacity 

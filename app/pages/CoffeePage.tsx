@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView, ToastAndroid } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CoffeeNavBar from "@/components/CoffeeNavBar";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import { useLocalSearchParams } from "expo-router";
@@ -8,18 +8,19 @@ import { TouchableOpacity } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useDispatch } from "react-redux";
 import { updateCartItems } from "@/utils/userCartSlice";
+import { CoffeeData, updateFavoriteItems } from "@/utils/favoritesSlice";
 
-interface CoffeeData {
-  image: string;
-  type: string;
-  shortDesc: string;
-  longDesc: string;
-  rating: string;
-  price: number;
-  cupSize?: { 
-    size: string; 
-    price: number }[];
-}
+// interface CoffeeData {
+//   image: string;
+//   type: string;
+//   shortDesc: string;
+//   longDesc: string;
+//   rating: string;
+//   price: number;
+//   cupSize?: { 
+//     size: string; 
+//     price: number }[];
+// }
 interface CartItem {
   type: string;
   shortDesc: string;
@@ -29,11 +30,17 @@ interface CartItem {
   cupSize?: string;
   size?: string;
   image: string;
+  rating:string;
+  longDesc: string
 }
 
 const CoffeePage = () => {
 
   const { data } = useLocalSearchParams();
+  const [selectedCupSize, setSelectedCupSize] = useState("S");
+  
+  const dispatch = useDispatch();
+
 
 
    // Safely parse the data
@@ -41,10 +48,13 @@ const CoffeePage = () => {
    try {
      if (typeof data === "string") {
        parsedData = JSON.parse(data) as CoffeeData;
+
+      
      }
    } catch (error) {
      console.error("Failed to parse data:", error);
    }
+
  
    if (!parsedData) {
      return (
@@ -54,10 +64,9 @@ const CoffeePage = () => {
      );
    }
 
-  const [selectedCupSize, setSelectedCupSize] = useState("S");
-  const [selectedCupSizePrice, setSelectedCupSizePrice] = useState(parsedData.price)
-  const dispatch = useDispatch();
+   const [selectedCupSizePrice, setSelectedCupSizePrice] = useState(parsedData.price)
 
+ 
 
  
 
@@ -70,7 +79,9 @@ const CoffeePage = () => {
         quantity: 1,
         totalPrice: selectedCupSizePrice ,
         cupSize: selectedCupSize,
-        image: parsedData.image
+        image: parsedData.image,
+        rating: parsedData.rating,
+        longDesc: parsedData.longDesc
   
       }
       console.log("cartItem", cartItem)
@@ -78,6 +89,28 @@ const CoffeePage = () => {
       ToastAndroid.show("item added to cart", ToastAndroid.BOTTOM)
   
     }
+    const addItemToFavorite = () =>{
+  
+      const favoriteItem:CoffeeData = {
+        type: parsedData.type,
+        shortDesc: parsedData.shortDesc,
+        price: selectedCupSizePrice,
+        cupSize: parsedData.cupSize,
+        image: parsedData.image,
+        rating: parsedData.rating,
+        longDesc: parsedData.longDesc
+  
+      }
+      console.log("favoriteItem", favoriteItem)
+      dispatch(updateFavoriteItems(favoriteItem));
+      
+  
+    }
+
+    useEffect(()=>{
+      console.log("Parsed Data:", parsedData);
+    },[])
+
   return (
     <View className="flex-1 bg-primary  pt-10">
       <ScrollView>
@@ -90,7 +123,7 @@ const CoffeePage = () => {
           )}
 
           <View className="absolute p-5">
-            <CoffeeNavBar />
+            <CoffeeNavBar favoriteFunction={addItemToFavorite} favoriteData={parsedData} />
           </View>
         </View>
 
