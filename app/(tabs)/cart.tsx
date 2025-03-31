@@ -1,12 +1,21 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, ToastAndroid } from "react-native";
 import React, { useEffect, useState } from "react";
 import NavBar from "@/components/NavBar";
 import { TouchableOpacity } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { CoffeeBeansCartCard, CoffeeCartCard } from "@/components/CartCard";
 import { useDispatch, useSelector } from "react-redux";
-import { CartItem, updateCartItems } from "@/utils/userCartSlice";
+import { CartItem, cartSetter, updateCartItems } from "@/utils/userCartSlice";
 import { useRouter } from "expo-router";
+import { updateOrderHistoryItems } from "@/utils/orderHistorySlice";
+import { showOrderNotification } from "@/utils/notification.service";
+import PushNotification from "react-native-push-notification";
+
+interface OrderHistory{
+  orderDate: string;
+  totalAmount:string;
+  cart: CartItem[];
+}
 
 const Cart = () => {
   const data = useSelector((state: any) => state.userCart.cart);
@@ -48,6 +57,29 @@ const Cart = () => {
         </TouchableOpacity>
       </View>
     );
+  }
+
+ 
+  const payClick = () =>{
+    dispatch(updateOrderHistoryItems({
+      orderDate: Date.now().toString(),
+      totalAmount:totalPrice,
+      cart: cartData
+    }));
+    ToastAndroid.show('Order Placed', ToastAndroid.SHORT);
+  //   showOrderNotification('Order Placed', 
+  //   `Your order for $${totalPrice} has been received`
+  // );
+  // PushNotification.localNotification({
+  //   title: "Order Placed",
+  //   message: `Your order for $${totalPrice} was received`,
+  // });
+  // const dispatch = useDispatch();
+     dispatch(cartSetter([]))
+    router.push('/pages/Payment')
+
+
+
   }
 
   return (
@@ -100,7 +132,7 @@ const Cart = () => {
         </View>
 
         <TouchableOpacity
-           onPress={()=>router.push('/pages/Payment')}
+           onPress={payClick}
         className="bg-secondary p-4 rounded-xl flex justify-center items-center w-[200px] ">
           <Text className="text-white text-outfit-medium text-2xl text-center">
             Pay

@@ -50,7 +50,7 @@ const TabLayout = () => {
 
 
      }}/>
-      <Tabs.Screen name='notification'  options={{
+      <Tabs.Screen name='orderhistory'  options={{
       tabBarLabel: '',
       tabBarIcon: ({color}) => <Octicons name="bell-fill" size={24} color={color} />
       
